@@ -6,16 +6,27 @@ var config = {
     backgroundColor: "#ddd",
     pixelArt: true,
     zoom: zoom,
-    scene: {
-        preload: preload,
-        create: create,
-        update: update,
-    }
+    scene:  [
+        {
+            key: 'main',
+            preload: mainPreload,
+            create: mainCreate,
+            update: mainUpdate,
+        },
+        {
+            key: 'minigame',
+            preload: minigamePreload,
+            create: minigameCreate,
+            update: minigameUpdate,
+        }
+    ]
 };
+
+var SPLASH_TIMEOUT = 1000; // TODO TMP
 var gameStages = {
     START: 1,
     EMAIL_ALERT: 2,
-    EMAIL_ALERT_TIMER: 6 * 1000,
+    EMAIL_ALERT_TIMER: 1 * 1000,
     EMAIL_READING: 3,
     EMAIL_READ: 4,
     MINIGAME: 5,
@@ -28,8 +39,7 @@ var playerTarget = { x: scrCenter.x, y: scrCenter.y };
 
 var game = new Phaser.Game(config);
 
-function preload ()
-{
+function mainPreload () {
     this.load.image('email-alert', 'imgs/email-alert.png');
     this.load.image('laptop', 'imgs/laptop.png');
     this.load.image('workbench', 'imgs/workbench.png');
@@ -37,8 +47,7 @@ function preload ()
     this.load.image('workshop-bgr', 'imgs/workshop-bgr.png');
 }
 
-function create ()
-{
+function mainCreate () {
     this.movePlayer = movePlayer;
     this.gameStage = gameStages.INIT;
 
@@ -52,11 +61,87 @@ function create ()
     this.player = this.add.image(scrCenter.x, scrCenter.y + 50, 'player');
 
     bgr.on('pointerdown', setPlayerTarget);
-    setTimeout(fadeOutSplash, 2000);
+    setTimeout(fadeOutSplash, SPLASH_TIMEOUT);
 }
 
-function update ()
-{
+function minigamePreload() {
+    this.load.image('mandrel', 'imgs/mandrel.png');
+    this.load.image('mandrel-sizes-bgr', 'imgs/mandrel-sizes-bgr.png');
+    this.load.image('ring-mandrel', 'imgs/ring-mandrel.png');
+    this.load.image('rubber-hammer', 'imgs/rubber-hammer.png');
+    
+}
+function minigameCreate() {
+    this.add.tileSprite(scrCenter.x, scrCenter.y, config.width, config.height, "mandrel-sizes-bgr");
+    
+    var txtConfig = { color: '#000', fontSize: 30 };
+    this.add.text(scrCenter.x - 80, scrCenter.y - 145, "XS", txtConfig);
+    this.add.text(scrCenter.x - 80, scrCenter.y - 95, "S", txtConfig);
+    this.add.text(scrCenter.x - 80, scrCenter.y - 45, "M", txtConfig);
+    this.add.text(scrCenter.x - 80, scrCenter.y + 5, "L", txtConfig);
+    this.add.text(scrCenter.x - 80, scrCenter.y + 55, "XL", txtConfig);
+                
+    this.add.image(scrCenter.x, scrCenter.y, 'mandrel');
+    this.ring = this.add.image(scrCenter.x, scrCenter.y - 135, 'ring-mandrel');
+    this.ring.setScale(0.4);
+    
+    this.hammer = this.add.image(scrCenter.x + 310, scrCenter.y - 30, 'rubber-hammer');
+    this.hammer.setOrigin(1, 1);
+    this.hammer.setScale(1.2);
+    
+    this.buttonPressing = false;
+    this.hasButtonBeenReleased = true;
+    this.hammering = false;
+    this.hammerForce = 0;
+    this.maxHammerForce = 35;
+    this.input.on('pointerdown', () => this.buttonPressing = true);
+    this.input.on('pointerup', () => this.buttonPressing = false);
+}
+
+function minigameUpdate(t, framerate) {
+    if (this.hammering) {
+        this.hammer.rotation -= 0.5;
+        if (this.hammer.rotation <= 0) {
+            this.ring.y += 2 * this.hammerForce;
+            this.hammer.y += 2 * this.hammerForce;
+            
+            var ringDownPerc =
+                (this.ring.y - (scrCenter.y - 135))
+                / (313.33333333333337 - (scrCenter.y - 135));
+            console.log(ringDownPerc);
+
+            this.ring.setScale(0.4 + ringDownPerc * 0.3);
+            
+            
+            
+            this.hammer.rotation = 0;
+            this.hammerForce = 0;
+            this.hammering = false;
+            this.hasButtonBeenReleased = false;
+        }
+        return;
+    }
+    
+    if (this.buttonPressing) {
+        if (!this.hasButtonBeenReleased)
+            return;
+
+        this.hammer.rotation += 0.03;
+        this.hammerForce += 1;
+        if (this.hammerForce > this.maxHammerForce) {
+            this.hammering = true;
+        }
+    } else {
+        this.hasButtonBeenReleased = true;
+        if (this.hammerForce > 0)
+            this.hammering = true;
+    }
+}
+
+
+function mainUpdate () {
+    // this.scene.start("minigame"); // TODO TMP
+                
     switch(this.gameStage) {
         case gameStages.INIT:
             this.movePlayer(this);
@@ -126,6 +211,8 @@ function update ()
                 Math.pow(this.workbench.y - this.player.y, 2)
             );
             if (dist < 20) {
+                this.scene.start("minigame");
+                /*
                 this.gameStage = gameStages.MINIGAME;
                 this.minigameTodo = this.add.text(
                     scrCenter.x / 4 , scrCenter.y / 2,
@@ -182,7 +269,7 @@ function update ()
                         
                     dis.endMinigame.destroy();
                     
-                });
+                });*/
             }
             break;
 
