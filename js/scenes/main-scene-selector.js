@@ -1,20 +1,49 @@
 (function () {
     config.scene.push({
         key: 'main',
-        preload: function () { },
+        preload: function () { 
+            this.load.image('btn-open-ring', 'imgs/btn-open-ring.png');
+            this.load.image('btn-closed-ring', 'imgs/btn-closed-ring.png');
+        },
         create: function () {
-            var menuTxts = config.scene.map((scene, idx) => {
-                return this.add.text(20, 50 + idx * 30, scene.description, { color: '#000' })
+            var btns = [
+                this.add.image(scrCenter.x, 60, 'btn-open-ring')
                     .setInteractive()
                     .on('pointerdown', () => {
-                        this.scene.start(scene.key);
-                        for (var i = menuTxts.length - 1; i >= 0 ; i--)
-                            menuTxts[i].destroy();
-                    }, this);
-            });
-            if (document.getElementById("splash"))
-                document.getElementById("splash").remove();
+                        this.scene.start('open-ring-mandrel');
+                        btns[0].destroy();
+                        btns[1].destroy();
+                    }, this),
+
+                this.add.image(scrCenter.x, 140, 'btn-closed-ring')
+                    .setInteractive()
+                    .on('pointerdown', () => {
+                        this.scene.start('closed-ring-mandrel');
+                        btns[0].destroy();
+                        btns[1].destroy();
+                    }, this),
+            ]
+
+            fadeOutSplash();
         },
         update: function () { }
     });
+    
+    function fadeOutSplash() {
+        var fadeTarget = document.getElementById("splash");
+        if (!fadeTarget)
+            return;
+        
+        var fadeEffect = setInterval(function () {
+            if (!fadeTarget.style.opacity) {
+                fadeTarget.style.opacity = 1;
+            }
+            if (fadeTarget.style.opacity > 0) {
+                fadeTarget.style.opacity -= 0.1;
+            } else {
+                fadeTarget.remove();
+                clearInterval(fadeEffect);
+            }
+        }, 60);
+    }
 })();

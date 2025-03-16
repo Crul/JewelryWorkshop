@@ -7,7 +7,7 @@
     var MIN_HAMMER_FORCE = 5;
     var BREAK_HAMMER_FORCE = 30;
     config.scene.push({
-        key: 'mandrel',
+        key: 'closed-ring-mandrel',
         description: "Closed ring mandrel minigame",
         preload: function() {
             this.load.audio('metal-hit', 'sound/metal-hit.mp3');
