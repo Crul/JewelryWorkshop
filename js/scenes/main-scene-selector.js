@@ -12,7 +12,8 @@
                             menuTxts[i].destroy();
                     }, this);
             });
-            document.getElementById("splash").remove();
+            if (document.getElementById("splash"))
+                document.getElementById("splash").remove();
         },
         update: function () { }
     });
