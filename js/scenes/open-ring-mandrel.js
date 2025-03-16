@@ -61,6 +61,10 @@
                     this.hammerLeftPressing = true;
                     this.hammerLeftHasHit = false;
                 })
+                .on('pointerout', () => {
+                    this.hammerLeftPressing = false;
+                    this.hammerLeftHasHit = false;
+                })
                 .on('pointerup', () => {
                     this.hammerLeftPressing = false;
                     this.hammerLeftHasHit = false;
@@ -74,6 +78,10 @@
                 .setInteractive()
                 .on('pointerdown', () => {
                     this.hammerRightPressing = true;
+                    this.hammerRightHasHit = false;
+                })
+                .on('pointerout', () => {
+                    this.hammerRightPressing = false;
                     this.hammerRightHasHit = false;
                 })
                 .on('pointerup', () => {

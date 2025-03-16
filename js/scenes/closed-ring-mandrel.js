@@ -57,6 +57,10 @@
                 this.buttonPressing = false;
                 this.hammerHasHit = false;
             });
+            this.input.on('pointerout', () => {
+                this.buttonPressing = false;
+                this.hammerHasHit = false;
+            });
             
             var popupY = -80;
             var popupBgr = this.add.image(scrCenter.x, scrCenter.y + popupY, 'popup-bgr');
