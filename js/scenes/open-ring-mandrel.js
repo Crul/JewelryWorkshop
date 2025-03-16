@@ -4,12 +4,20 @@
     var HORIZONTAL_MAX_POS = 6;
     var TOP_POS = scrCenter.y - 125;
     var BOTTOM_POS = 250;
-    
+    var MAX_HAMMER_FORCE = 50;
+    var MIN_HAMMER_FORCE = 16;
+    var BREAK_HAMMER_FORCE = 40;
+
     config.scene.push({
         key: 'open-ring-mandrel',
         description: "Open ring mandrel minigame",
 
         preload: function() {
+            this.load.audio('metal-hit', 'sound/metal-hit.mp3');
+            this.load.audio('metal-hit-soft', 'sound/metal-hit-soft.mp3');
+            this.load.audio('metal-hit-hollow', 'sound/metal-hit-hollow.mp3');
+            this.load.audio('metal-breaking', 'sound/metal-breaking.mp3');
+
             this.load.image('mandrel', 'imgs/mandrel.png');
             this.load.image('mandrel-sizes-bgr', 'imgs/mandrel-sizes-bgr.png');
             this.load.spritesheet('open-ring-mandrel-left', 'imgs/open-ring-mandrel-left.png', { frameWidth: 39, frameHeight: 22 });
@@ -36,8 +44,6 @@
             this.ringRight.setOrigin(0.3333, 0.181818);
 
             setRingDownPerc(this, 0.45);
-
-            this.maxHammerForce = 50;
 
             this.hammerLeftPressing = false;
             this.hammerLeftReleased = true;
@@ -72,16 +78,36 @@
         update: function (t, framerate) {
 
             if (this.hammeringLeft) {
-                this.hammerLeft.rotation += 0.6;
-                if (this.hammerLeft.rotation >= 0) {
-                    if (this.ringLeft.frame.name < 4) {
-                        this.ringLeft.setFrame(this.ringLeft.texture.frames[this.ringLeft.frame.name + 1]);
-                    }
+                this.hammeringLeft = false;
+                this.hammerLeftReleased = false;
 
+                this.hammerLeft.rotation += 0.6;
+                if (this.hammerLeftForce > BREAK_HAMMER_FORCE) {
+                    this.ringLeft.setFrame(this.ringLeft.texture.frames[5]);
+                    this.sound.play('metal-breaking');
+
+                } else if (this.hammerLeftForce > MIN_HAMMER_FORCE) {
+                    if (this.ringLeft.frame.name == 5) {
+                        this.sound.play('metal-hit');
+                    } else if (this.ringLeft.frame.name < 4) {
+                        this.sound.play('metal-hit');
+                        this.ringLeft.setFrame(this.ringLeft.texture.frames[this.ringLeft.frame.name + 1]);
+                    } else {
+                        this.sound.play('metal-hit-hollow');
+                    }
+                } else {
+                    if (this.ringLeft.frame.name == 5) {
+                        this.sound.play('metal-hit');
+                    } else if (this.ringLeft.frame.name < 4) {
+                        this.sound.play('metal-hit-soft');
+                    } else {
+                        this.sound.play('metal-hit-hollow');
+                    }
+                }
+
+                if (this.hammerLeft.rotation >= 0) {
                     this.hammerLeft.rotation = 0;
                     this.hammerLeftForce = 0;
-                    this.hammeringLeft = false;
-                    this.hammerLeftReleased = false;
                 }
                 this.tweens.add({
                     targets: this.hammerLeft,
@@ -94,16 +120,36 @@
             }
 
             if (this.hammeringRight) {
+                this.hammeringRight = false;
+                this.hammerRightReleased = false;
+                
                 this.hammerRight.rotation -= 0.6;
-                if (this.hammerRight.rotation <= 0) {
-                    if (this.ringRight.frame.name < 4) {
-                        this.ringRight.setFrame(this.ringRight.texture.frames[this.ringRight.frame.name + 1]);
-                    }
+                if (this.hammerRightForce > BREAK_HAMMER_FORCE) {
+                    this.ringRight.setFrame(this.ringRight.texture.frames[5]);
+                    this.sound.play('metal-breaking');
 
+                } else if (this.hammerRightForce > MIN_HAMMER_FORCE) {
+                    if (this.ringRight.frame.name == 5) {
+                        this.sound.play('metal-hit');
+                    } else if (this.ringRight.frame.name < 4) {
+                        this.sound.play('metal-hit');
+                        this.ringRight.setFrame(this.ringRight.texture.frames[this.ringRight.frame.name + 1]);
+                    } else {
+                        this.sound.play('metal-hit-hollow');
+                    }
+                } else {
+                    if (this.ringRight.frame.name == 5) {
+                        this.sound.play('metal-hit');
+                    } else if (this.ringRight.frame.name < 4) {
+                        this.sound.play('metal-hit-soft');
+                    } else {
+                        this.sound.play('metal-hit-hollow');
+                    }
+                }
+
+                if (this.hammerRight.rotation <= 0) {
                     this.hammerRight.rotation = 0;
                     this.hammerRightForce = 0;
-                    this.hammeringRight = false;
-                    this.hammerRightReleased = false;
                 }
                 this.tweens.add({
                     targets: this.hammerRight,
@@ -122,7 +168,7 @@
                 this.hammerLeft.setAlpha(1);
                 this.hammerLeft.rotation -= 0.03;
                 this.hammerLeftForce += 1;
-                if (this.hammerLeftForce > this.maxHammerForce) {
+                if (this.hammerLeftForce >= MAX_HAMMER_FORCE) {
                     this.hammeringLeft = true;
                 }
             } else {
@@ -138,7 +184,7 @@
                 this.hammerRight.setAlpha(1);
                 this.hammerRight.rotation += 0.03;
                 this.hammerRightForce += 1;
-                if (this.hammerRightForce > this.maxHammerForce) {
+                if (this.hammerRightForce >= MAX_HAMMER_FORCE) {
                     this.hammeringRight = true;
                 }
             } else {
