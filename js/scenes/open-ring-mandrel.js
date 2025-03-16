@@ -6,7 +6,7 @@
     var BOTTOM_POS = 250;
     var MAX_HAMMER_FORCE = 50;
     var MIN_HAMMER_FORCE = 16;
-    var BREAK_HAMMER_FORCE = 33;
+    var BREAK_HAMMER_FORCE = 30;
 
     config.scene.push({
         key: 'open-ring-mandrel',

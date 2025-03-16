@@ -1,6 +1,6 @@
 (function () {
     var TOP_POS = 125;
-    var BOTTOM_POS = 250;
+    var BOTTOM_POS = 100;
     var SCALE_BASE = 0.4;
     var SCALE_DELTA = 0.32;
     var MAX_HAMMER_FORCE = 50;
@@ -104,15 +104,15 @@
                         
                         var ringDownPerc =
                             (this.ring.y - (scrCenter.y - TOP_POS))
-                            / (BOTTOM_POS - (scrCenter.y - TOP_POS));
+                            / (scrCenter.y + BOTTOM_POS - (scrCenter.y - TOP_POS));
 
                         this.ring.setScale(SCALE_BASE + ringDownPerc * SCALE_DELTA);
                         
-                        //console.log(ringDownPerc);
+                        // console.log(ringDownPerc);
                         
-                        if (ringDownPerc > 0.5) {
+                        if (ringDownPerc >= 0.43) {
                             this.popupGroup.setActive(true).setVisible(true);
-                            if (ringDownPerc > 0.64) {
+                            if (ringDownPerc > 0.58) {
                                 this.successTxt.setVisible(false);
                             } else {
                                 this.failTxt.setVisible(false);
