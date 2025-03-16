@@ -1,4 +1,4 @@
-var zoom = 1.5;
+var zoom = 2;
 var config = {
     type: Phaser.AUTO,
     width: window.innerWidth / zoom,

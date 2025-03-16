@@ -1,6 +1,11 @@
 (function () {
+    var TOP_POS = 125;
+    var BOTTOM_POS = 313.33333333333337;
+    var SCALE_BASE = 0.33;
+    var SCALE_DELTA = 0.35;
     config.scene.push({
         key: 'mandrel',
+        description: "Closed ring mandrel minigame",
         preload: function() {
             this.load.image('mandrel', 'imgs/mandrel.png');
             this.load.image('mandrel-sizes-bgr', 'imgs/mandrel-sizes-bgr.png');
@@ -18,8 +23,8 @@
             this.add.text(scrCenter.x - 80, scrCenter.y + 55, "XL", txtConfig);
                         
             this.add.image(scrCenter.x, scrCenter.y, 'mandrel');
-            this.ring = this.add.image(scrCenter.x, scrCenter.y - 135, 'ring-mandrel');
-            this.ring.setScale(0.4);
+            this.ring = this.add.image(scrCenter.x, scrCenter.y - TOP_POS, 'ring-mandrel');
+            this.ring.setScale(SCALE_BASE);
             
             this.hammer = this.add.image(scrCenter.x + 310, scrCenter.y - 30, 'rubber-hammer');
             this.hammer.setOrigin(1, 1);
@@ -41,11 +46,11 @@
                     this.hammer.y += 2 * this.hammerForce;
                     
                     var ringDownPerc =
-                        (this.ring.y - (scrCenter.y - 135))
-                        / (313.33333333333337 - (scrCenter.y - 135));
+                        (this.ring.y - (scrCenter.y - TOP_POS))
+                        / (BOTTOM_POS - (scrCenter.y - TOP_POS));
                     console.log(ringDownPerc);
 
-                    this.ring.setScale(0.4 + ringDownPerc * 0.3);
+                    this.ring.setScale(SCALE_BASE + ringDownPerc * SCALE_DELTA);
                     
                     this.hammer.rotation = 0;
                     this.hammerForce = 0;
