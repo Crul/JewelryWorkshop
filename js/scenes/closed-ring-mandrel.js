@@ -27,15 +27,15 @@
         },
         create: function () {
             this.add.tileSprite(scrCenter.x, scrCenter.y, config.width, config.height, "mandrel-sizes-bgr")
-                .setTilePosition(0, (349 -  config.height) / 2);
+                .setTilePosition(0, (349 -  config.height) / 2 + 25);
             
             var txtConfig = { color: '#000', fontSize: 30 };
-            var lineHeight = 50;
-            this.add.text(scrCenter.x - 80, scrCenter.y - lineHeight * 2, "XS", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y - lineHeight, "S", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y, "M", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y + lineHeight, "L", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y + lineHeight * 2, "XL", txtConfig);
+            var lineHeight = 34;
+            this.add.text(scrCenter.x - 80, scrCenter.y - 25 - lineHeight * 2, "XS", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 25 - lineHeight, "S", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 25, "M", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 25 + lineHeight, "L", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 25 + lineHeight * 2, "XL", txtConfig);
             
             this.add.image(scrCenter.x, scrCenter.y, 'mandrel');
             this.ring = this.add.image(scrCenter.x + 1, scrCenter.y - TOP_POS, 'ring-mandrel');
@@ -58,7 +58,7 @@
                 this.hammerHasHit = false;
             });
             
-            var popupY = -60;
+            var popupY = -80;
             var popupBgr = this.add.image(scrCenter.x, scrCenter.y + popupY, 'popup-bgr');
 
             this.successTxt = this.add
@@ -101,11 +101,14 @@
                         var ringDownPerc =
                             (this.ring.y - (scrCenter.y - TOP_POS))
                             / (BOTTOM_POS - (scrCenter.y - TOP_POS));
-                            this.ring.setScale(SCALE_BASE + ringDownPerc * SCALE_DELTA);
+
+                        this.ring.setScale(SCALE_BASE + ringDownPerc * SCALE_DELTA);
                         
-                        if (ringDownPerc > 0.57) {
+                        //console.log(ringDownPerc);
+                        
+                        if (ringDownPerc > 0.5) {
                             this.popupGroup.setActive(true).setVisible(true);
-                            if (ringDownPerc > 0.8) {
+                            if (ringDownPerc > 0.64) {
                                 this.successTxt.setVisible(false);
                             } else {
                                 this.failTxt.setVisible(false);

@@ -33,15 +33,15 @@
 
         create: function () {
             this.add.tileSprite(scrCenter.x, scrCenter.y, config.width, config.height, "mandrel-sizes-bgr")
-                .setTilePosition(0, (349 -  config.height) / 2);
+                .setTilePosition(0, (349 -  config.height) / 2 + 50);
             
             var txtConfig = { color: '#000', fontSize: 30 };
-            var lineHeight = 50;
-            this.add.text(scrCenter.x - 80, scrCenter.y - lineHeight * 2, "XS", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y - lineHeight, "S", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y, "M", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y + lineHeight, "L", txtConfig);
-            this.add.text(scrCenter.x - 80, scrCenter.y + lineHeight * 2, "XL", txtConfig);
+            var lineHeight = 34;
+            this.add.text(scrCenter.x - 80, scrCenter.y - 50 - lineHeight * 2, "XS", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 50 - lineHeight, "S", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 50, "M", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 50 + lineHeight, "L", txtConfig);
+            this.add.text(scrCenter.x - 80, scrCenter.y - 50 + lineHeight * 2, "XL", txtConfig);
 
             this.add.image(scrCenter.x, scrCenter.y, 'mandrel');
             this.ringLeft = this.add.sprite(INITIAL_LEFT_POS, TOP_POS, 'open-ring-mandrel-left');
