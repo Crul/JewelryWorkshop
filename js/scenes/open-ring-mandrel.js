@@ -92,22 +92,23 @@
             this.hammerRight.setScale(1.2);
             this.hammerRight.setAlpha(0);
             
-            var popupBgr = this.add.image(scrCenter.x, scrCenter.y, 'popup-bgr');
+            var popupY = 40;
+            var popupBgr = this.add.image(scrCenter.x, scrCenter.y + popupY, 'popup-bgr');
 
             this.successTxt = this.add
-                .image(scrCenter.x, scrCenter.y - 18, 'txt-success')
+                .image(scrCenter.x, scrCenter.y + popupY - 18, 'txt-success')
                 .setVisible(false);
         
                 this.failTxt = this.add
-                .image(scrCenter.x, scrCenter.y - 18, 'txt-fail')
+                .image(scrCenter.x, scrCenter.y + popupY - 18, 'txt-fail')
                 .setVisible(false);
 
             this.popupGroup = this.add.group([
                 popupBgr, this.successTxt, this.failTxt,
-                this.add.image(scrCenter.x - 36, scrCenter.y + 18, 'btn-retry')
+                this.add.image(scrCenter.x - 36, scrCenter.y + popupY + 18, 'btn-retry')
                     .setInteractive()
                     .on('pointerdown', () => this.scene.restart() ),
-                this.add.image(scrCenter.x + 36, scrCenter.y + 18, 'btn-exit')
+                this.add.image(scrCenter.x + 36, scrCenter.y + popupY + 18, 'btn-exit')
                     .setInteractive()
                     .on('pointerdown', () => this.scene.start('main') ),
             ]).setActive(false).setVisible(false);
@@ -127,7 +128,6 @@
                         this.sound.play('metal-breaking');
                         this.popupGroup.setActive(true).setVisible(true);
                         this.successTxt.setVisible(false);
-                        this.failTxt.setVisible(true);
 
                     } else if (this.hammerLeftForce > MIN_HAMMER_FORCE) {
                         if (this.ringLeft.frame.name == 5) {
@@ -138,7 +138,6 @@
                             this.ringLeft.setFrame(this.ringLeft.texture.frames[this.ringLeft.frame.name + 1]);
                             if (this.ringRight.frame.name == 4 && this.ringLeft.frame.name == 4) {
                                 this.popupGroup.setActive(true).setVisible(true);
-                                this.successTxt.setVisible(true);
                                 this.failTxt.setVisible(false);
                             }
 
@@ -180,7 +179,6 @@
                         this.sound.play('metal-breaking');
                         this.popupGroup.setActive(true).setVisible(true);
                         this.successTxt.setVisible(false);
-                        this.failTxt.setVisible(true);
 
                     } else if (this.hammerRightForce > MIN_HAMMER_FORCE) {
                         if (this.ringRight.frame.name == 5) {
@@ -191,7 +189,6 @@
                             
                             if (this.ringRight.frame.name == 4 && this.ringLeft.frame.name == 4) {
                                 this.popupGroup.setActive(true).setVisible(true);
-                                this.successTxt.setVisible(true);
                                 this.failTxt.setVisible(false);
                             }
 
