@@ -46,22 +46,34 @@
             setRingDownPerc(this, 0.45);
 
             this.hammerLeftPressing = false;
-            this.hammerLeftReleased = true;
+            this.hammerLeftHasHit = false;
             this.hammeringLeft = false;
             this.hammerLeftForce = 0;
             this.add.circle(scrCenter.x - 100, scrCenter.y, 50, '0xff0000', 0.5)
                 .setInteractive()
-                .on('pointerdown', () => this.hammerLeftPressing = true)
-                .on('pointerup', () => this.hammerLeftPressing = false);
+                .on('pointerdown', () => {
+                    this.hammerLeftPressing = true;
+                    this.hammerLeftHasHit = false;
+                })
+                .on('pointerup', () => {
+                    this.hammerLeftPressing = false;
+                    this.hammerLeftHasHit = false;
+                });
 
             this.hammerRightPressing = false;
-            this.hammerRightReleased = true;
+            this.hammerRightHasHit = false;
             this.hammeringRight = false;
             this.hammerRightForce = 0;
             this.add.circle(scrCenter.x + 100, scrCenter.y, 50, '0xff0000', 0.5)
                 .setInteractive()
-                .on('pointerdown', () => this.hammerRightPressing = true)
-                .on('pointerup', () => this.hammerRightPressing = false);
+                .on('pointerdown', () => {
+                    this.hammerRightPressing = true;
+                    this.hammerRightHasHit = false;
+                })
+                .on('pointerup', () => {
+                    this.hammerRightPressing = false;
+                    this.hammerRightHasHit = false;
+                });
     
             this.hammerLeft = this.add.image(scrCenter.x - 330, scrCenter.y + 80, 'rubber-hammer');
             this.hammerLeft.setFlip(true, false);
@@ -78,91 +90,93 @@
         update: function (t, framerate) {
 
             if (this.hammeringLeft) {
-                this.hammeringLeft = false;
-                this.hammerLeftReleased = false;
-
                 this.hammerLeft.rotation += 0.6;
-                if (this.hammerLeftForce > BREAK_HAMMER_FORCE) {
-                    this.ringLeft.setFrame(this.ringLeft.texture.frames[5]);
-                    this.sound.play('metal-breaking');
-
-                } else if (this.hammerLeftForce > MIN_HAMMER_FORCE) {
-                    if (this.ringLeft.frame.name == 5) {
-                        this.sound.play('metal-hit');
-                    } else if (this.ringLeft.frame.name < 4) {
-                        this.sound.play('metal-hit');
-                        this.ringLeft.setFrame(this.ringLeft.texture.frames[this.ringLeft.frame.name + 1]);
-                    } else {
-                        this.sound.play('metal-hit-hollow');
-                    }
-                } else {
-                    if (this.ringLeft.frame.name == 5) {
-                        this.sound.play('metal-hit');
-                    } else if (this.ringLeft.frame.name < 4) {
-                        this.sound.play('metal-hit-soft');
-                    } else {
-                        this.sound.play('metal-hit-hollow');
-                    }
-                }
 
                 if (this.hammerLeft.rotation >= 0) {
+                        
+                    if (this.hammerLeftForce > BREAK_HAMMER_FORCE) {
+                        this.ringLeft.setFrame(this.ringLeft.texture.frames[5]);
+                        this.sound.play('metal-breaking');
+
+                    } else if (this.hammerLeftForce > MIN_HAMMER_FORCE) {
+                        if (this.ringLeft.frame.name == 5) {
+                            this.sound.play('metal-hit');
+                        } else if (this.ringLeft.frame.name < 4) {
+                            this.sound.play('metal-hit');
+                            this.ringLeft.setFrame(this.ringLeft.texture.frames[this.ringLeft.frame.name + 1]);
+                        } else {
+                            this.sound.play('metal-hit-hollow');
+                        }
+                    } else {
+                        if (this.ringLeft.frame.name == 5) {
+                            this.sound.play('metal-hit');
+                        } else if (this.ringLeft.frame.name < 4) {
+                            this.sound.play('metal-hit-soft');
+                        } else {
+                            this.sound.play('metal-hit-hollow');
+                        }
+                    }
+                    
                     this.hammerLeft.rotation = 0;
                     this.hammerLeftForce = 0;
+                    this.hammeringLeft = false;
+                        
+                    this.tweens.add({
+                        targets: this.hammerLeft,
+                        alpha: { from: 1, to: 0 },
+                        ease: 'Quad.easeOut',
+                        duration: 600,
+                        repeat: 0,
+                    });
                 }
-                this.tweens.add({
-                    targets: this.hammerLeft,
-                    alpha: { from: 1, to: 0 },
-                    ease: 'Quad.easeOut',
-                    duration: 600,
-                    repeat: 0,
-                  });
                 return;
             }
 
             if (this.hammeringRight) {
-                this.hammeringRight = false;
-                this.hammerRightReleased = false;
-                
                 this.hammerRight.rotation -= 0.6;
-                if (this.hammerRightForce > BREAK_HAMMER_FORCE) {
-                    this.ringRight.setFrame(this.ringRight.texture.frames[5]);
-                    this.sound.play('metal-breaking');
-
-                } else if (this.hammerRightForce > MIN_HAMMER_FORCE) {
-                    if (this.ringRight.frame.name == 5) {
-                        this.sound.play('metal-hit');
-                    } else if (this.ringRight.frame.name < 4) {
-                        this.sound.play('metal-hit');
-                        this.ringRight.setFrame(this.ringRight.texture.frames[this.ringRight.frame.name + 1]);
-                    } else {
-                        this.sound.play('metal-hit-hollow');
-                    }
-                } else {
-                    if (this.ringRight.frame.name == 5) {
-                        this.sound.play('metal-hit');
-                    } else if (this.ringRight.frame.name < 4) {
-                        this.sound.play('metal-hit-soft');
-                    } else {
-                        this.sound.play('metal-hit-hollow');
-                    }
-                }
 
                 if (this.hammerRight.rotation <= 0) {
+                        
+                    if (this.hammerRightForce > BREAK_HAMMER_FORCE) {
+                        this.ringRight.setFrame(this.ringRight.texture.frames[5]);
+                        this.sound.play('metal-breaking');
+
+                    } else if (this.hammerRightForce > MIN_HAMMER_FORCE) {
+                        if (this.ringRight.frame.name == 5) {
+                            this.sound.play('metal-hit');
+                        } else if (this.ringRight.frame.name < 4) {
+                            this.sound.play('metal-hit');
+                            this.ringRight.setFrame(this.ringRight.texture.frames[this.ringRight.frame.name + 1]);
+                        } else {
+                            this.sound.play('metal-hit-hollow');
+                        }
+                    } else {
+                        if (this.ringRight.frame.name == 5) {
+                            this.sound.play('metal-hit');
+                        } else if (this.ringRight.frame.name < 4) {
+                            this.sound.play('metal-hit-soft');
+                        } else {
+                            this.sound.play('metal-hit-hollow');
+                        }
+                    }
+                    
                     this.hammerRight.rotation = 0;
                     this.hammerRightForce = 0;
+                    this.hammeringRight = false;
+                        
+                    this.tweens.add({
+                        targets: this.hammerRight,
+                        alpha: { from: 1, to: 0 },
+                        ease: 'Quad.easeOut',
+                        duration: 600,
+                        repeat: 0,
+                    });
                 }
-                this.tweens.add({
-                    targets: this.hammerRight,
-                    alpha: { from: 1, to: 0 },
-                    ease: 'Quad.easeOut',
-                    duration: 600,
-                    repeat: 0,
-                  });
                 return;
             }
 
             if (this.hammerLeftPressing) {
-                if (!this.hammerLeftReleased)
+                if (this.hammerLeftHasHit)
                     return;
 
                 this.hammerLeft.setAlpha(1);
@@ -170,15 +184,17 @@
                 this.hammerLeftForce += 1;
                 if (this.hammerLeftForce >= MAX_HAMMER_FORCE) {
                     this.hammeringLeft = true;
+                    this.hammerLeftHasHit = true;
                 }
             } else {
-                this.hammerLeftReleased = true;
-                if (this.hammerLeftForce > 0)
+                if (this.hammerLeftForce > 0) {
+                    this.hammerLeftHasHit = true;
                     this.hammeringLeft = true;
+                }
             }
             
             if (this.hammerRightPressing) {
-                if (!this.hammerRightReleased)
+                if (this.hammerRightHasHit)
                     return;
 
                 this.hammerRight.setAlpha(1);
@@ -186,11 +202,13 @@
                 this.hammerRightForce += 1;
                 if (this.hammerRightForce >= MAX_HAMMER_FORCE) {
                     this.hammeringRight = true;
+                    this.hammerRightHasHit = true;
                 }
             } else {
-                this.hammerRightReleased = true;
-                if (this.hammerRightForce > 0)
+                if (this.hammerRightForce > 0) {
+                    this.hammerRightHasHit = true;
                     this.hammeringRight = true;
+                }
             }
         }
     });
