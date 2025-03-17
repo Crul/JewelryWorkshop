@@ -7,6 +7,7 @@
     var MAX_HAMMER_FORCE = 50;
     var MIN_HAMMER_FORCE = 16;
     var BREAK_HAMMER_FORCE = 30;
+    var MAX_PARTICLES = 10;
 
     config.scene.push({
         key: 'open-ring-mandrel',
@@ -18,6 +19,8 @@
             this.load.audio('metal-hit-hollow', 'sound/metal-hit-hollow.mp3');
             this.load.audio('metal-breaking', 'sound/metal-breaking.mp3');
 
+            this.load.image('spark', 'imgs/spark.png');
+            
             this.load.image('popup-bgr', 'imgs/popup-bgr.png');
             this.load.image('txt-fail', 'imgs/txt-fail.png');
             this.load.image('txt-success', 'imgs/txt-success.png');
@@ -48,6 +51,16 @@
             this.ringRight = this.add.sprite(INITIAL_RIGHT_POS, TOP_POS, 'open-ring-mandrel-right');
             this.ringLeft.setOrigin(0.6666, 0.181818);
             this.ringRight.setOrigin(0.3333, 0.181818);
+
+            this.particleEmitter = this.add.particles(INITIAL_LEFT_POS - 10, TOP_POS, 'spark', {
+                scale: { start: 1.5, end: 0.1 },
+                alpha: { start: 1, end: 0 },
+                speed: { min: 100, max: 400 },
+                angle: { min: 0, max: 360 },
+                lifespan: 150,
+                quantity: 1,
+                gravityY: 2000,
+            }).stop();
 
             setRingDownPerc(this, 0.45);
 
@@ -130,16 +143,26 @@
                 this.hammerLeft.rotation += 0.6;
 
                 if (this.hammerLeft.rotation >= 0) {
+                    this.particleEmitter.x = INITIAL_LEFT_POS - 10;
 
                     if (this.hammerLeftForce > BREAK_HAMMER_FORCE) {
                         this.ringLeft.setFrame(this.ringLeft.texture.frames[5]);
                         this.sound.play('metal-breaking');
+                        this.particleEmitter.quantity = MAX_PARTICLES;
+                        this.particleEmitter.explode();
                         this.popupGroup.setActive(true).setVisible(true);
                         this.successTxt.setVisible(false);
 
                     } else if (this.hammerLeftForce > MIN_HAMMER_FORCE) {
+                        this.particleEmitter.quantity = 1 
+                            + MAX_PARTICLES 
+                            * (BREAK_HAMMER_FORCE - (this.hammerLeftForce - MIN_HAMMER_FORCE))
+                            / (BREAK_HAMMER_FORCE - MIN_HAMMER_FORCE);
+                        this.particleEmitter.explode();
+
                         if (this.ringLeft.frame.name == 5) {
                             this.sound.play('metal-hit');
+
                         } else if (this.ringLeft.frame.name < 4) {
                             this.sound.play('metal-hit');
 
@@ -152,7 +175,11 @@
                         } else {
                             this.sound.play('metal-hit-hollow');
                         }
+
                     } else {
+                        this.particleEmitter.quantity = 1;
+                        this.particleEmitter.explode();
+
                         if (this.ringLeft.frame.name == 5) {
                             this.sound.play('metal-hit');
                         } else if (this.ringLeft.frame.name < 4) {
@@ -182,13 +209,23 @@
 
                 if (this.hammerRight.rotation <= 0) {
 
+                    this.particleEmitter.x = INITIAL_RIGHT_POS + 10;
+
                     if (this.hammerRightForce > BREAK_HAMMER_FORCE) {
                         this.ringRight.setFrame(this.ringRight.texture.frames[5]);
                         this.sound.play('metal-breaking');
+                        this.particleEmitter.quantity = MAX_PARTICLES;
+                        this.particleEmitter.explode();
                         this.popupGroup.setActive(true).setVisible(true);
                         this.successTxt.setVisible(false);
 
                     } else if (this.hammerRightForce > MIN_HAMMER_FORCE) {
+                        this.particleEmitter.quantity = 1 
+                            + MAX_PARTICLES 
+                            * (BREAK_HAMMER_FORCE - (this.hammerLeftForce - MIN_HAMMER_FORCE))
+                            / (BREAK_HAMMER_FORCE - MIN_HAMMER_FORCE);
+                        this.particleEmitter.explode();
+
                         if (this.ringRight.frame.name == 5) {
                             this.sound.play('metal-hit');
                         } else if (this.ringRight.frame.name < 4) {
@@ -204,6 +241,9 @@
                             this.sound.play('metal-hit-hollow');
                         }
                     } else {
+                        this.particleEmitter.quantity = 1;
+                        this.particleEmitter.explode();
+
                         if (this.ringRight.frame.name == 5) {
                             this.sound.play('metal-hit');
                         } else if (this.ringRight.frame.name < 4) {
@@ -269,6 +309,7 @@
     function setRingDownPerc(game, ringDownPerc) {
         game.ringLeft.y = TOP_POS + ringDownPerc * (BOTTOM_POS - TOP_POS);
         game.ringRight.y = TOP_POS + ringDownPerc * (BOTTOM_POS - TOP_POS);
+        game.particleEmitter.y = TOP_POS + ringDownPerc * (BOTTOM_POS - TOP_POS);
         game.ringLeft.x = INITIAL_LEFT_POS - ringDownPerc * HORIZONTAL_MAX_POS;
         game.ringRight.x = INITIAL_RIGHT_POS + 2 + ringDownPerc * HORIZONTAL_MAX_POS;
     }

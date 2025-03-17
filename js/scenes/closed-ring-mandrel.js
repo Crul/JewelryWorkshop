@@ -6,6 +6,7 @@
     var MAX_HAMMER_FORCE = 50;
     var MIN_HAMMER_FORCE = 5;
     var BREAK_HAMMER_FORCE = 30;
+    var MAX_PARTICLES = 10;
     config.scene.push({
         key: 'closed-ring-mandrel',
         description: "Closed ring mandrel minigame",
@@ -13,6 +14,8 @@
             this.load.audio('metal-hit', 'sound/metal-hit.mp3');
             this.load.audio('metal-hit-soft', 'sound/metal-hit-soft.mp3');
             this.load.audio('metal-breaking', 'sound/metal-breaking.mp3');
+
+            this.load.image('spark', 'imgs/spark.png');
 
             this.load.image('popup-bgr', 'imgs/popup-bgr.png');
             this.load.image('txt-fail', 'imgs/txt-fail.png');
@@ -41,6 +44,16 @@
             this.ring = this.add.image(scrCenter.x + 1, scrCenter.y - TOP_POS, 'ring-mandrel');
             this.ring.setScale(SCALE_BASE);
             
+            this.particleEmitter = this.add.particles(scrCenter.x + 1, scrCenter.y - TOP_POS, 'spark', {
+                scale: { start: 1.5, end: 0.1 },
+                alpha: { start: 1, end: 0 },
+                speed: { min: 100, max: 400 },
+                angle: { min: 0, max: 360 },
+                lifespan: 150,
+                quantity: 1,
+                gravityY: 2000,
+            }).stop();
+
             this.hammer = this.add.image(scrCenter.x + 310, scrCenter.y - 30, 'rubber-hammer');
             this.hammer.setOrigin(1, 1);
             this.hammer.setScale(1.2);
@@ -93,14 +106,23 @@
                     if (this.hammerForce > BREAK_HAMMER_FORCE) {
                         this.ring.setVisible(false);
                         this.sound.play('metal-breaking');
+                        this.particleEmitter.quantity = MAX_PARTICLES;
+                        this.particleEmitter.explode();
                         this.popupGroup.setActive(true).setVisible(true);
                         this.successTxt.setVisible(false);
 
                     } else if (this.hammerForce > MIN_HAMMER_FORCE) {
                         this.sound.play('metal-hit');
+                        this.particleEmitter.quantity = 1 
+                            + MAX_PARTICLES 
+                            * (BREAK_HAMMER_FORCE - (this.hammerForce - MIN_HAMMER_FORCE))
+                            / (BREAK_HAMMER_FORCE - MIN_HAMMER_FORCE);
+
+                        this.particleEmitter.explode();
 
                         this.ring.y += 3 * this.hammerForce;
                         this.hammer.y += 3 * this.hammerForce;
+                        this.particleEmitter.y += 3 * this.hammerForce;
                         
                         var ringDownPerc =
                             (this.ring.y - (scrCenter.y - TOP_POS))
@@ -121,6 +143,8 @@
 
                     } else {
                         this.sound.play('metal-hit-soft');
+                        this.particleEmitter.quantity = 1;
+                        this.particleEmitter.explode();
                     }
 
                     this.hammer.rotation = 0;
