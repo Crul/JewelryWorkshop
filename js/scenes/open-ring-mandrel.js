@@ -2,8 +2,8 @@
     var INITIAL_LEFT_POS = scrCenter.x - 5;
     var INITIAL_RIGHT_POS = scrCenter.x + 5;
     var HORIZONTAL_MAX_POS = 6;
-    var TOP_POS = scrCenter.y - 125;
-    var BOTTOM_POS = 250;
+    var TOP_POS = 125;
+    var BOTTOM_POS = 100;
     var MAX_HAMMER_FORCE = 50;
     var MIN_HAMMER_FORCE = 16;
     var BREAK_HAMMER_FORCE = 30;
@@ -47,12 +47,12 @@
             this.add.text(scrCenter.x - 80, scrCenter.y - 50 + lineHeight * 2, "XL", txtConfig);
 
             this.add.image(scrCenter.x, scrCenter.y, 'mandrel');
-            this.ringLeft = this.add.sprite(INITIAL_LEFT_POS, TOP_POS, 'open-ring-mandrel-left');
-            this.ringRight = this.add.sprite(INITIAL_RIGHT_POS, TOP_POS, 'open-ring-mandrel-right');
+            this.ringLeft = this.add.sprite(INITIAL_LEFT_POS, scrCenter.y - TOP_POS, 'open-ring-mandrel-left');
+            this.ringRight = this.add.sprite(INITIAL_RIGHT_POS, scrCenter.y - TOP_POS, 'open-ring-mandrel-right');
             this.ringLeft.setOrigin(0.6666, 0.181818);
             this.ringRight.setOrigin(0.3333, 0.181818);
 
-            this.particleEmitter = this.add.particles(INITIAL_LEFT_POS - 10, TOP_POS, 'spark', {
+            this.particleEmitter = this.add.particles(INITIAL_LEFT_POS - 10, scrCenter.y - TOP_POS, 'spark', {
                 scale: { start: 1.5, end: 0.1 },
                 alpha: { start: 1, end: 0 },
                 speed: { min: 100, max: 400 },
@@ -62,7 +62,7 @@
                 gravityY: 2000,
             }).stop();
 
-            setRingDownPerc(this, 0.45);
+            setRingDownPerc(this, 0.38);
 
             this.hammerLeftPressing = false;
             this.hammerLeftHasHit = false;
@@ -307,9 +307,12 @@
     });
 
     function setRingDownPerc(game, ringDownPerc) {
-        game.ringLeft.y = TOP_POS + ringDownPerc * (BOTTOM_POS - TOP_POS);
-        game.ringRight.y = TOP_POS + ringDownPerc * (BOTTOM_POS - TOP_POS);
-        game.particleEmitter.y = TOP_POS + ringDownPerc * (BOTTOM_POS - TOP_POS);
+        var y = (scrCenter.y - TOP_POS) 
+            + ringDownPerc * (scrCenter.y + BOTTOM_POS - (scrCenter.y - TOP_POS));
+
+        game.ringLeft.y = y;
+        game.ringRight.y = y;
+        game.particleEmitter.y = y;
         game.ringLeft.x = INITIAL_LEFT_POS - ringDownPerc * HORIZONTAL_MAX_POS;
         game.ringRight.x = INITIAL_RIGHT_POS + 2 + ringDownPerc * HORIZONTAL_MAX_POS;
     }
