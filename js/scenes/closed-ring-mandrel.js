@@ -4,7 +4,7 @@
     var SCALE_BASE = 0.4;
     var SCALE_DELTA = 0.32;
     var MAX_HAMMER_FORCE = 50;
-    var MIN_HAMMER_FORCE = 5;
+    var MIN_HAMMER_FORCE = 10;
     var BREAK_HAMMER_FORCE = 30;
     var MAX_PARTICLES = 10;
     config.scene.push({
@@ -120,9 +120,13 @@
 
                         this.particleEmitter.explode();
 
-                        this.ring.y += 3 * this.hammerForce;
-                        this.hammer.y += 3 * this.hammerForce;
-                        this.particleEmitter.y += 3 * this.hammerForce;
+                        var yDisplacement = 120 
+                            * ((this.hammerForce - MIN_HAMMER_FORCE) * (this.hammerForce - MIN_HAMMER_FORCE))
+                            / ((BREAK_HAMMER_FORCE - MIN_HAMMER_FORCE) * (BREAK_HAMMER_FORCE - MIN_HAMMER_FORCE));
+
+                        this.ring.y += 3 * yDisplacement;
+                        this.hammer.y += 3 * yDisplacement;
+                        this.particleEmitter.y += 3 * yDisplacement;
                         
                         var ringDownPerc =
                             (this.ring.y - (scrCenter.y - TOP_POS))
@@ -132,9 +136,9 @@
                         
                         // console.log(ringDownPerc);
                         
-                        if (ringDownPerc >= 0.43) {
+                        if (ringDownPerc >= 0.46) {
                             this.popupGroup.setActive(true).setVisible(true);
-                            if (ringDownPerc > 0.58) {
+                            if (ringDownPerc > 0.55) {
                                 this.successTxt.setVisible(false);
                             } else {
                                 this.failTxt.setVisible(false);
