@@ -3,6 +3,8 @@
         key: 'v-slot-saw',
         preload: function() {
             this.load.audio('metal-sawing', 'sound/metal-sawing.mp3');
+            this.load.audio('metal-breaking', 'sound/metal-breaking.mp3');
+            this.load.audio('wire-breaking', 'sound/wire-breaking.mp3');
             
             this.load.image('popup-bgr', 'imgs/popup-bgr.png');
             this.load.image('txt-fail', 'imgs/txt-fail.png');
@@ -23,6 +25,7 @@
             this.refY = 0;
             this.currentY = 0;
             this.soundPlayed = false;
+            this.sawPasses = 0;
             this.input.on('pointerdown', (ev) => {
                 this.buttonPressing = true;
                 this.refY = ev.position.y;
@@ -39,7 +42,7 @@
                 this.buttonPressing = false;
             });
 
-            var popupY = -80;
+            var popupY = 60;
             var popupBgr = this.add.image(scrCenter.x, scrCenter.y + popupY, 'popup-bgr');
 
             this.successTxt = this.add
@@ -61,15 +64,28 @@
             ]).setActive(false).setVisible(false);
         },
         update: function (t, framerate) {
-            if (this.popupGroup.active)
+            if (this.popupGroup.active)  {
+                this.copingSaw.y = (scrCenter.y + 9 * this.copingSaw.y)/10;
                 return;
+            }
             
             if (this.buttonPressing) {
                 var prevY = this.copingSaw.y;
                 this.copingSaw.y = scrCenter.y - (this.refY - this.currentY);
-                if (!this.soundPlayed && this.copingSaw.y - prevY > 5) {
+                // console.log(this.copingSaw.y - prevY);
+                if (this.copingSaw.y - prevY > 35) {
+                    this.sound.play('metal-breaking');
+                    this.sound.play('wire-breaking');
+                    this.popupGroup.setActive(true).setVisible(true);
+                    this.successTxt.setVisible(false);
+                } else if (!this.soundPlayed && this.copingSaw.y - prevY > 10) {
+                    this.sawPasses++;
                     this.sound.play('metal-sawing');
                     this.soundPlayed = true;
+                    if (this.sawPasses > 4) {
+                        this.popupGroup.setActive(true).setVisible(true);
+                        this.failTxt.setVisible(false);
+                    }
                 } else if (this.copingSaw.y - prevY < -5) {
                     this.soundPlayed = false;
                 }
