@@ -73,12 +73,12 @@
                 var prevY = this.copingSaw.y;
                 this.copingSaw.y = scrCenter.y - (this.refY - this.currentY);
                 // console.log(this.copingSaw.y - prevY);
-                if (this.copingSaw.y - prevY > 35) {
+                if (this.copingSaw.y - prevY > 20) {
                     this.sound.play('metal-breaking');
                     this.sound.play('wire-breaking');
                     this.popupGroup.setActive(true).setVisible(true);
                     this.successTxt.setVisible(false);
-                } else if (!this.soundPlayed && this.copingSaw.y - prevY > 10) {
+                } else if (!this.soundPlayed && this.copingSaw.y - prevY > 5) {
                     this.sawPasses++;
                     this.sound.play('metal-sawing');
                     this.soundPlayed = true;
