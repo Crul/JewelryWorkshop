@@ -11,8 +11,6 @@
 
     config.scene.push({
         key: 'open-ring-mandrel',
-        description: "Open ring mandrel minigame",
-
         preload: function() {
             this.load.audio('metal-hit', 'sound/metal-hit.mp3');
             this.load.audio('metal-hit-soft', 'sound/metal-hit-soft.mp3');

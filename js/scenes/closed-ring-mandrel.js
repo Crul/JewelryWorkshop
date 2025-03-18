@@ -9,7 +9,6 @@
     var MAX_PARTICLES = 10;
     config.scene.push({
         key: 'closed-ring-mandrel',
-        description: "Closed ring mandrel minigame",
         preload: function() {
             this.load.audio('metal-hit', 'sound/metal-hit.mp3');
             this.load.audio('metal-hit-soft', 'sound/metal-hit-soft.mp3');

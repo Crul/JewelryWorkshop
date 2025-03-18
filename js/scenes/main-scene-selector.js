@@ -4,6 +4,7 @@
         preload: function () { 
             this.load.image('btn-open-ring', 'imgs/btn-open-ring.png');
             this.load.image('btn-closed-ring', 'imgs/btn-closed-ring.png');
+            this.load.image('btn-v-slot-saw', 'imgs/btn-v-slot-saw.png');
         },
         create: function () {
             var btns = [
@@ -13,6 +14,7 @@
                         this.scene.start('open-ring-mandrel');
                         btns[0].destroy();
                         btns[1].destroy();
+                        btns[2].destroy();
                     }, this),
 
                 this.add.image(scrCenter.x, 140, 'btn-closed-ring')
@@ -21,6 +23,16 @@
                         this.scene.start('closed-ring-mandrel');
                         btns[0].destroy();
                         btns[1].destroy();
+                        btns[2].destroy();
+                    }, this),
+
+                this.add.image(scrCenter.x, 220, 'btn-v-slot-saw')
+                    .setInteractive()
+                    .on('pointerdown', () => {
+                        this.scene.start('v-slot-saw');
+                        btns[0].destroy();
+                        btns[1].destroy();
+                        btns[2].destroy();
                     }, this),
             ]
 
