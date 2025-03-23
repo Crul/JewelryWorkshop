@@ -20,17 +20,17 @@
         create: function () {
             this.solderingProgress = 0;
             this.ringSolderingFrames = this.textures.get('ring-soldering-atlas').getFrameNames();
-            this.ringCold = this.add.sprite(scrCenter.x, scrCenter.y, 'ring-soldering-atlas', this.ringSolderingFrames[0])
+            var ringY = scrCenter.y + 50;
+            this.ringCold = this.add.sprite(scrCenter.x, ringY, 'ring-soldering-atlas', this.ringSolderingFrames[0])
                 .setScale(1.5);
-            this.ringHot = this.add.sprite(scrCenter.x, scrCenter.y, 'ring-soldering-atlas', this.ringSolderingFrames[1])
+            this.ringHot = this.add.sprite(scrCenter.x, ringY, 'ring-soldering-atlas', this.ringSolderingFrames[1])
                 .setAlpha(0)
                 .setScale(1.5);
-            this.solderBottom = this.add.sprite(scrCenter.x, scrCenter.y, 'ring-soldering-atlas', this.ringSolderingFrames[2])
+            this.solderBottom = this.add.sprite(scrCenter.x, ringY, 'ring-soldering-atlas', this.ringSolderingFrames[2])
                 .setScale(1.5);
-            this.solderTop = this.add.sprite(scrCenter.x, scrCenter.y, 'ring-soldering-atlas', this.ringSolderingFrames[3])
+            this.solderTop = this.add.sprite(scrCenter.x, ringY, 'ring-soldering-atlas', this.ringSolderingFrames[3])
                 .setAlpha(0)
                 .setScale(1.5);
-
 
             this.blowtorch = this.add.image(-125, -50, 'blowtorch')
                 .setOrigin(0.018, 0.0694);
@@ -61,15 +61,17 @@
             this.blowtorchTurningOnSound = this.sound.add('blowtorch-turning-on');
             this.blowtorchLoopSound = this.sound.add('blowtorch-loop');
             this.blowtorching = false;
+            this.pointerTarget = {x:0, y:0};
             this.burningTimer = 0;
             dragBlowtorch = (pointer, dragX, dragY) => {
                 if (this.popupGroup.active)
                      return;
-                this.blowtorchContainer.setPosition(dragX, dragY);
+                this.pointerTarget = pointer.position;
             };
             dragStartBlowtorch = (pointer, dragX, dragY) => {
                 if (this.popupGroup.active)
                      return;
+                this.pointerTarget = pointer.position;
                 this.blowtorching = true;
                 this.blowtorchTurningOnSound.stop();
                 this.blowtorchTurningOnSound.play({ volume: 1 });
@@ -82,17 +84,18 @@
                 this.blowtorchTurningOnSound.stop();
                 this.blowtorchLoopSound.setVolume(0.2);
             };
-            this.blowtorchContainer = this.add.container(scrCenter.x + 150, scrCenter.y - 160)
+
+            this.blowtorchContainer = this.add.container(scrCenter.x + 120, scrCenter.y - 50)
                 .add([ this.blowtorch, this.flameDark, this.flameLight ])
                 .setRotation(-0.4)
-                .setSize(250, 150)
+                .setSize(10000, 10000)
                 .setInteractive({ draggable: true })
                 .on('drag', dragBlowtorch)
                 .on('dragstart', dragStartBlowtorch)
                 .on('dragend', dragBEndlowtorch);
 
             this.blowtorchTransfMatrix = new Phaser.GameObjects.Components
-                .TransformMatrix().scale(1, 4).rotate(1).translate(-538, -72.5);
+                .TransformMatrix().scale(1, 4).rotate(1).translate(-138 - scrCenter.x, 137 - ringY);
 
             this.blowtorchTurningOnSound.play({ volume: 0.2 });
             this.blowtorchLoopSound.play(
@@ -145,6 +148,12 @@
             this.flameLight.play('blowtorch-flame-light', { randomFrame: true });
 
             if (this.blowtorching) {
+                this.blowtorchContainer.x =
+                    (6 * this.blowtorchContainer.x + (this.pointerTarget.x + 112)) / 7;
+
+                this.blowtorchContainer.y =
+                    (6 * this.blowtorchContainer.y + (this.pointerTarget.y - 80)) / 7;
+
                 this.blowtorchContainer.rotation =
                     (4 * this.blowtorchContainer.rotation - 1) / 5;
             } else {

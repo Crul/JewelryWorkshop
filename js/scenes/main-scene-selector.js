@@ -1,7 +1,7 @@
 (function () {
     config.scene.push({
         key: 'main',
-        preload: function () { 
+        preload: function () {
             this.load.image('btn-open-ring', 'imgs/btn-open-ring.png');
             this.load.image('btn-closed-ring', 'imgs/btn-closed-ring.png');
             this.load.image('btn-v-slot-saw', 'imgs/btn-v-slot-saw.png');
@@ -30,12 +30,12 @@
         },
         update: function () { }
     });
-    
+
     function fadeOutSplash() {
         var fadeTarget = document.getElementById("splash");
         if (!fadeTarget)
             return;
-        
+
         var fadeEffect = setInterval(function () {
             if (!fadeTarget.style.opacity) {
                 fadeTarget.style.opacity = 1;
