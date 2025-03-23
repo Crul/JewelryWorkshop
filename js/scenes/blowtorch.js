@@ -48,13 +48,15 @@
             });
 
             this.flameDark = this.add.sprite(-125, -50, 'blowtorch-flame-dark-sprite')
-                .setOrigin(1, 0.5)
+                .setOrigin(1.05, 0.5)
                 .setAlpha(0.5)
+                .setScale(0.9, 1)
                 .play('blowtorch-flame-dark');
 
             this.flameLight = this.add.sprite(-125, -50, 'blowtorch-flame-light-sprite')
                 .setOrigin(1, 0.5)
                 .setAlpha(0.5)
+                .setScale(0.7, 1)
                 .play('blowtorch-flame-light');
 
             this.hotHissingSound = this.sound.add('hot-hissing');
@@ -86,7 +88,7 @@
             };
 
             this.blowtorchContainer = this.add.container(scrCenter.x + 120, scrCenter.y - 50)
-                .add([ this.blowtorch, this.flameDark, this.flameLight ])
+                .add([ this.flameDark, this.flameLight, this.blowtorch ])
                 .setRotation(-0.4)
                 .setSize(10000, 10000)
                 .setInteractive({ draggable: true })
