@@ -1,0 +1,181 @@
+{
+    "frames": [
+        {
+            "filename": "ring-cold",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "ring-hot",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 60,
+                "y": 0
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "solder0000",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 37
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "solder0001",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 60,
+                "y": 37
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "solder0002",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 74
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "solder0003",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 60,
+                "y": 74
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "solder0004",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 111
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        },
+        {
+            "filename": "solder0005",
+            "frame": {
+                "h": 37,
+                "w": 60,
+                "x": 60,
+                "y": 111
+            },
+            "rotated": false,
+            "sourceSize": {
+                "h": 37,
+                "w": 60
+            },
+            "spriteSourceSize": {
+                "h": 37,
+                "w": 60,
+                "x": 0,
+                "y": 0
+            },
+            "trimmed": true
+        }
+    ],
+
+    "meta": {
+        "app": "Crul",
+        "version": "0.0",
+        "image": "blowtorch-flame.png",
+        "format": "RGBA8888",
+        "size": {"w":155,"h":198},
+        "scale": "1"
+    }
+}

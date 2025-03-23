@@ -5,35 +5,25 @@
             this.load.image('btn-open-ring', 'imgs/btn-open-ring.png');
             this.load.image('btn-closed-ring', 'imgs/btn-closed-ring.png');
             this.load.image('btn-v-slot-saw', 'imgs/btn-v-slot-saw.png');
+            this.load.image('btn-blowtorch', 'imgs/btn-blowtorch.png');
         },
         create: function () {
             var btns = [
-                this.add.image(scrCenter.x, 60, 'btn-open-ring')
+                this.add.image(scrCenter.x - 50, 60, 'btn-open-ring')
                     .setInteractive()
-                    .on('pointerdown', () => {
-                        this.scene.start('open-ring-mandrel');
-                        btns[0].destroy();
-                        btns[1].destroy();
-                        btns[2].destroy();
-                    }, this),
+                    .on('pointerdown', () => this.scene.start('open-ring-mandrel'), this),
 
-                this.add.image(scrCenter.x, 140, 'btn-closed-ring')
+                this.add.image(scrCenter.x + 50, 60, 'btn-closed-ring')
                     .setInteractive()
-                    .on('pointerdown', () => {
-                        this.scene.start('closed-ring-mandrel');
-                        btns[0].destroy();
-                        btns[1].destroy();
-                        btns[2].destroy();
-                    }, this),
+                    .on('pointerdown', () => this.scene.start('closed-ring-mandrel'), this),
 
-                this.add.image(scrCenter.x, 220, 'btn-v-slot-saw')
+                this.add.image(scrCenter.x - 50, 140, 'btn-v-slot-saw')
                     .setInteractive()
-                    .on('pointerdown', () => {
-                        this.scene.start('v-slot-saw');
-                        btns[0].destroy();
-                        btns[1].destroy();
-                        btns[2].destroy();
-                    }, this),
+                    .on('pointerdown', () => this.scene.start('v-slot-saw'), this),
+
+                this.add.image(scrCenter.x + 50, 140, 'btn-blowtorch')
+                    .setInteractive()
+                    .on('pointerdown', () => this.scene.start('blowtorch'), this),
             ]
 
             fadeOutSplash();
