@@ -79,7 +79,7 @@
                 this.blowtorchTurningOnSound.play({ volume: 1 });
                 this.blowtorchLoopSound.setVolume(1);
             };
-            dragBEndlowtorch = (pointer, dragX, dragY) => {
+            dragEndBlowtorch = (pointer, dragX, dragY) => {
                 if (this.popupGroup.active)
                      return;
                 this.blowtorching = false;
@@ -94,7 +94,7 @@
                 .setInteractive({ draggable: true })
                 .on('drag', dragBlowtorch)
                 .on('dragstart', dragStartBlowtorch)
-                .on('dragend', dragBEndlowtorch);
+                .on('dragend', dragEndBlowtorch);
 
             this.blowtorchTransfMatrix = new Phaser.GameObjects.Components
                 .TransformMatrix().scale(1, 4).rotate(1).translate(-138 - scrCenter.x, 137 - ringY);

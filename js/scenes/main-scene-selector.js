@@ -6,6 +6,7 @@
             this.load.image('btn-closed-ring', 'imgs/btn-closed-ring.png');
             this.load.image('btn-v-slot-saw', 'imgs/btn-v-slot-saw.png');
             this.load.image('btn-blowtorch', 'imgs/btn-blowtorch.png');
+            this.load.image('btn-pliers', 'imgs/btn-pliers.png');
         },
         create: function () {
             var btns = [
@@ -24,6 +25,10 @@
                 this.add.image(scrCenter.x + 50, 140, 'btn-blowtorch')
                     .setInteractive()
                     .on('pointerdown', () => this.scene.start('blowtorch'), this),
+
+                this.add.image(scrCenter.x - 50, 220, 'btn-pliers')
+                    .setInteractive()
+                    .on('pointerdown', () => this.scene.start('pliers'), this),
             ]
 
             fadeOutSplash();
@@ -35,7 +40,8 @@
         var fadeTarget = document.getElementById("splash");
         if (!fadeTarget)
             return;
-
+fadeTarget.remove();
+return;
         var fadeEffect = setInterval(function () {
             if (!fadeTarget.style.opacity) {
                 fadeTarget.style.opacity = 1;
