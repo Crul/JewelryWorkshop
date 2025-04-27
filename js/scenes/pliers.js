@@ -11,6 +11,8 @@
         key: 'pliers',
         preload: function() {
             this.load.audio('bending', 'sound/bending.mp3');
+            this.load.audio('clipping-soft', 'sound/clipping-wire-soft.mp3');
+            this.load.audio('clipping-hard', 'sound/clipping-wire-hard.mp3');
 
             this.load.image('mandrel-back', 'imgs/mandrel-perspective-back.png');
             this.load.image('mandrel-front', 'imgs/mandrel-perspective-front.png');
@@ -24,6 +26,8 @@
             this.load.image('btn-exit', 'imgs/btn-exit.png');
         },
         create: function () {
+            this.clippingSoftSound = this.sound.add('clipping-soft');
+            this.clippingHardSound = this.sound.add('clipping-hard');
             this.bendingSound = this.sound.add('bending', { loop: true, volume: 0.2, rate: 0.9 });
             this.bendingSoundTarget = { volume: 0.2, rate: 1, detune: 0 };
 
@@ -180,6 +184,7 @@
                         this.pliersRight.rotation += pliersRightDeltaRot;
 
                         if (Math.abs(pliersRightDeltaRot) < 0.001) {
+                            this.clippingSoftSound.play();
                             this.bendingSound.play();
                             this.isWirePlied = true;
                             this.button.fillColor = 0x00ff00;
@@ -214,10 +219,10 @@
                         .color;
 
                     if (this.accumulatedError > MAX_ACCUMULATED_ERROR) {
-                        this.bendingSound.stop();
                         this.buttonPressing = false;
                         this.isWirePlied = false;
                         this.button.fillColor = 0x0000ff;
+                        this.clippingHardSound.play();
                     }
 
                     if (this.endAngle > 7) {
