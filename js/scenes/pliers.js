@@ -10,6 +10,8 @@
     config.scene.push({
         key: 'pliers',
         preload: function() {
+            this.load.audio('bending', 'sound/bending.mp3');
+
             this.load.image('pliers-left', 'imgs/pliers-left.png');
             this.load.image('pliers-right', 'imgs/pliers-right.png');
 
@@ -20,6 +22,9 @@
             this.load.image('btn-exit', 'imgs/btn-exit.png');
         },
         create: function () {
+            this.bendingSound = this.sound.add('bending', { loop: true, volume: 0.2, rate: 0.9 });
+            this.bendingSoundTarget = { volume: 0.2, rate: 1, detune: 0 };
+
             this.graphics = this.add.graphics();
             
             this.isWirePlied = false;
@@ -34,7 +39,8 @@
             this.pliersContainer = this.add.container(scrCenter.x + PAN_LEFT + 20, scrCenter.y - 50)
                 .add([ this.pliersLeft, this.pliersRight ]);
             
-            this.pointerPos = getWireTipPos(INITIAL_ANGLE_RAD);
+            this.lastPointerPos = getWireTipPos(INITIAL_ANGLE_RAD);
+            this.pointerPos = this.lastPointerPos;
             this.endAngle = getEndAngleRad(this.pointerPos);
             this.buttonPressing = false;
             this.accumulatedError = 0;
@@ -44,6 +50,7 @@
 
                 this.pointerPos = pointer.position;
                 this.endAngle = getEndAngleRad(pointer.position);
+                this.bendingSoundTarget.detune = 1000 * (this.endAngle - 2.35) / (7 - 2.35);
             };
             dragStartWire = (pointer, dragX, dragY) => {
                 if (this.popupGroup.active)
@@ -56,12 +63,14 @@
                 this.pliersTargetData.closedness = 1;
             };
             dragEndWire = (pointer, dragX, dragY) => {
+                this.bendingSound.stop();
                 this.buttonPressing = false;
                 this.pliersTargetData.closedness = 0;
                 this.isWirePlied = false;
+                this.button.fillColor = 0x0000ff;
             };
 
-            this.button = this.add.circle(scrCenter.x + PAN_LEFT, scrCenter.y, 20, 0xffff00, 0.5)
+            this.button = this.add.circle(scrCenter.x + PAN_LEFT, scrCenter.y, 20, 0x0000ff, 0.5)
                 .setInteractive({ draggable: true })
                 .on('drag', dragWire)
                 .on('dragstart', dragStartWire)
@@ -99,9 +108,22 @@
 
         },
         update: function (t, framerate) {
+            if (this.bendingSound.volume > 0) {
+                this.bendingSound.setVolume((9 * this.bendingSound.volume + this.bendingSoundTarget.volume) / 10);
+                if (this.bendingSound.volume < 0.05) {
+                    this.bendingSound.setVolume(0);
+                }
+            }
+
             if (this.popupGroup.active) {
+                if (this.bendingSound.volume < 0.05) {
+                    this.bendingSound.stop();
+                }
                 return;
             }
+
+            this.bendingSound.setRate((9 * this.bendingSound.rate + this.bendingSoundTarget.rate) / 10);
+            this.bendingSound.setDetune((9 * this.bendingSound.detune + this.bendingSoundTarget.detune) / 10);
 
             var deltaWireX = this.wire.end.x - this.wire.start.x;
             var deltaWireY = this.wire.end.y - this.wire.start.y;
@@ -152,28 +174,51 @@
                         this.pliersLeft.rotation += pliersLeftDeltaRot;
                         this.pliersRight.rotation += pliersRightDeltaRot;
 
-                        if (Math.abs(pliersRightDeltaRot) < 0.001)
+                        if (Math.abs(pliersRightDeltaRot) < 0.001) {
+                            this.bendingSound.play();
                             this.isWirePlied = true;
+                            this.button.fillColor = 0x00ff00;
+                        }
                     }
                 } else {
                     this.pliersContainer.x += totalDeltaPosX;
                     this.pliersContainer.y += totalDeltaPosY;
                     this.pliersContainer.rotation += totalDeltaAngle;
                     this.wire = this.renderWire();
-                    
-                    var error = Math.max(0, 
+
+                    var error = 0 * Math.max(0,
                         Phaser.Math.Distance.BetweenPoints(this.wire.end, this.pointerPos) 
                         - SAFE_DISTANCE_MARGIN
                     );
+
+                    var distanceMoved = Math.sqrt(
+                        (this.pointerPos.x - this.lastPointerPos.x) ** 2
+                        + (this.pointerPos.y - this.lastPointerPos.y) ** 2
+                    );
+                    if (distanceMoved == 0) {
+                        this.bendingSoundTarget.volume = 0;
+                    } else {
+                        this.bendingSoundTarget.volume = 0.2;
+                        this.bendingSoundTarget.rate = 0.7 + 0.2 * (distanceMoved / 10);
+                    }
+                    this.lastPointerPos = { x: this.pointerPos.x, y: this.pointerPos.y };
+
                     this.accumulatedError += error;
+                    this.button.fillColor = Phaser.Display.Color
+                        .HSLToColor(Phaser.Math.Linear(2/6, 0, this.accumulatedError / MAX_ACCUMULATED_ERROR), 1, 0.5)
+                        .color;
+
                     if (this.accumulatedError > MAX_ACCUMULATED_ERROR) {
+                        this.bendingSound.stop();
                         this.buttonPressing = false;
                         this.isWirePlied = false;
+                        this.button.fillColor = 0x0000ff;
                     }
 
                     if (this.endAngle > 7) {
                         this.popupGroup.setActive(true).setVisible(true);
                         this.failTxt.setVisible(false);
+                        this.bendingSoundTarget.volume = 0;
                     }
                 }
             }
