@@ -5,7 +5,8 @@
     const MANDREL_WIDTH = 20;
     const PAN_LEFT = 20;
     const MAX_ACCUMULATED_ERROR = 70;
-    const SAFE_DISTANCE_MARGIN = 5;
+    const SAFE_DISTANCE_MARGIN = 0;
+    const ERROR_FACTOR = 0.1;
     
     config.scene.push({
         key: 'pliers',
@@ -53,6 +54,7 @@
             this.endAngle = getEndAngleRad(this.pointerPos);
             this.buttonPressing = false;
             this.accumulatedError = 0;
+            this.stoppedTimer = 0;
             dragWire = (pointer, dragX, dragY) => {
                 if (this.popupGroup.active)
                      return;
@@ -70,6 +72,7 @@
                 this.endAngle = getEndAngleRad(pointer.position);
                 
                 this.pliersTargetData.closedness = 1;
+                this.stoppedTimer = 0;
             };
             dragEndWire = (pointer, dragX, dragY) => {
                 this.bendingSoundTarget.volume = 0;
@@ -77,6 +80,7 @@
                 this.pliersTargetData.closedness = 0;
                 this.isWirePlied = false;
                 this.button.fillColor = 0x0000ff;
+                this.stoppedTimer = 0;
             };
 
             this.button = this.add.circle(scrCenter.x + PAN_LEFT, scrCenter.y, 20, 0x0000ff, 0.5)
@@ -193,10 +197,10 @@
                     this.pliersContainer.rotation += totalDeltaAngle;
                     this.wire = this.renderWire();
 
-                    var error = Math.max(0,
+                    var error = ERROR_FACTOR * Math.pow(Math.max(0,
                         Phaser.Math.Distance.BetweenPoints(this.wire.end, this.pointerPos) 
                         - SAFE_DISTANCE_MARGIN
-                    );
+                    ), 2);
 
                     var distanceMoved = Math.sqrt(
                         (this.pointerPos.x - this.lastPointerPos.x) ** 2
@@ -204,7 +208,12 @@
                     );
                     if (distanceMoved == 0) {
                         this.bendingSoundTarget.volume = 0;
+                        if (error < 1) {
+                            this.stoppedTimer++;
+                            this.accumulatedError *= Math.pow(error / this.stoppedTimer, 0.05);
+                        }
                     } else {
+                        this.stoppedTimer = 0;
                         this.bendingSoundTarget.volume = 0.2;
                         this.bendingSoundTarget.rate = 0.7 + 0.2 * (distanceMoved / 10);
                     }
