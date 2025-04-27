@@ -28,10 +28,10 @@
         create: function () {
             this.clippingSoftSound = this.sound.add('clipping-soft');
             this.clippingHardSound = this.sound.add('clipping-hard');
-            this.bendingSound = this.sound.add('bending', { loop: true, volume: 0.2, rate: 0.9 });
-            this.bendingSoundTarget = { volume: 0.2, rate: 1, detune: 0 };
+            this.bendingSound = this.sound.add('bending', { loop: true, volume: 0, rate: 0.9 });
+            this.bendingSoundTarget = { volume: 0, rate: 1, detune: 0 };
+            this.bendingSound.play();
 
-            
             this.isWirePlied = false;
             this.pliersTargetData = {
                 pos: {x: scrCenter.x + PAN_LEFT + 20, y: scrCenter.y - 50},
@@ -72,7 +72,7 @@
                 this.pliersTargetData.closedness = 1;
             };
             dragEndWire = (pointer, dragX, dragY) => {
-                this.bendingSound.stop();
+                this.bendingSoundTarget.volume = 0;
                 this.buttonPressing = false;
                 this.pliersTargetData.closedness = 0;
                 this.isWirePlied = false;
@@ -117,12 +117,7 @@
 
         },
         update: function (t, framerate) {
-            if (this.bendingSound.volume > 0) {
-                this.bendingSound.setVolume((9 * this.bendingSound.volume + this.bendingSoundTarget.volume) / 10);
-                if (this.bendingSound.volume < 0.05) {
-                    this.bendingSound.setVolume(0);
-                }
-            }
+            this.bendingSound.setVolume((9 * this.bendingSound.volume + this.bendingSoundTarget.volume) / 10);
 
             if (this.popupGroup.active) {
                 if (this.bendingSound.volume < 0.05) {
@@ -157,6 +152,7 @@
                 this.pliersContainer.rotation += deltaAngle;
                 this.pliersLeft.rotation *= 0.9;
                 this.pliersRight.rotation *= 0.9;
+                this.bendingSoundTarget.volume = 0;
             } else {
                 var totalDeltaPosX = this.wire.end.x 
                     + (28 + 15 * this.accumulatedError / MAX_ACCUMULATED_ERROR) * wireDirection.x 
@@ -173,6 +169,7 @@
                     this.pliersContainer.y += deltaPosY;
                     this.pliersContainer.rotation += deltaAngle;
 
+                    this.bendingSoundTarget.volume = 0;
                     if (Math.abs(deltaPosX) + Math.abs(deltaPosY) < 1 && Math.abs(deltaAngle) < 0.1) {
                         var pliersLeftDeltaRot = (
                             -this.pliersTargetData.closedness * 0.31 - this.pliersLeft.rotation
@@ -185,7 +182,7 @@
 
                         if (Math.abs(pliersRightDeltaRot) < 0.001) {
                             this.clippingSoftSound.play();
-                            this.bendingSound.play();
+                            this.bendingSoundTarget.volume = 0.2;
                             this.isWirePlied = true;
                             this.button.fillColor = 0x00ff00;
                         }
