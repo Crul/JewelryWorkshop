@@ -12,6 +12,8 @@
         preload: function() {
             this.load.audio('bending', 'sound/bending.mp3');
 
+            this.load.image('mandrel-back', 'imgs/mandrel-perspective-back.png');
+            this.load.image('mandrel-front', 'imgs/mandrel-perspective-front.png');
             this.load.image('pliers-left', 'imgs/pliers-left.png');
             this.load.image('pliers-right', 'imgs/pliers-right.png');
 
@@ -25,7 +27,6 @@
             this.bendingSound = this.sound.add('bending', { loop: true, volume: 0.2, rate: 0.9 });
             this.bendingSoundTarget = { volume: 0.2, rate: 1, detune: 0 };
 
-            this.graphics = this.add.graphics();
             
             this.isWirePlied = false;
             this.pliersTargetData = {
@@ -33,12 +34,16 @@
                 rotation: 0,
                 closedness: 0
             };
+            this.add.image(scrCenter.x + MANDREL_WIDTH, scrCenter.y + 50, 'mandrel-back');
+            this.graphics = this.add.graphics();
             this.pliersLeft = this.add.image(0, 0, 'pliers-left').setOrigin(0.8222, 0.2795);
             this.pliersRight = this.add.image(0, 0, 'pliers-right').setOrigin(0.221, 0.2795);
             
             this.pliersContainer = this.add.container(scrCenter.x + PAN_LEFT + 20, scrCenter.y - 50)
                 .add([ this.pliersLeft, this.pliersRight ]);
             
+            this.add.image(scrCenter.x + MANDREL_WIDTH, scrCenter.y + 50, 'mandrel-front');
+
             this.lastPointerPos = getWireTipPos(INITIAL_ANGLE_RAD);
             this.pointerPos = this.lastPointerPos;
             this.endAngle = getEndAngleRad(this.pointerPos);
