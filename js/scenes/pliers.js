@@ -222,35 +222,32 @@
                     }
                 }
             }
-
-            // this.graphics.lineStyle(10, 0x888888, 1);
-            // this.curve.draw(this.graphics);
-            // this.graphics.lineStyle(8, 0xAAAAAA, 1);
-            // this.curve.draw(this.graphics);
-            // this.graphics.lineStyle(6, 0xCCCCCC, 1);
-            // this.curve.draw(this.graphics);
-            // this.graphics.lineStyle(4, 0xDDDDDD, 1);
-            // this.curve.draw(this.graphics);
-            // this.graphics.lineStyle(2, 0xEEEEEE, 1);
-            // this.curve.draw(this.graphics);
         }
     });
 
     function renderWire() {
+        var wireStraightStart = {
+            x: scrCenter.x + PAN_LEFT + MANDREL_WIDTH * Math.cos(this.endAngle), 
+            y: scrCenter.y + MANDREL_WIDTH * Math.sin(this.endAngle)
+        };
+        var wireStraightEnd = getWireTipPos(this.endAngle);
         this.graphics.clear();
-        this.graphics.lineStyle(4, 0xff00ff, 1);
-        this.graphics.beginPath();
-        this.graphics.arc(scrCenter.x + PAN_LEFT, scrCenter.y, MANDREL_WIDTH, INITIAL_ANGLE_RAD, this.endAngle);
-        var wireTipPos = getWireTipPos(this.endAngle);
-        this.graphics.lineTo(wireTipPos.x, wireTipPos.y);
-        this.graphics.strokePath();
-        this.button.setPosition(wireTipPos.x, wireTipPos.y);
+
+        const colors = [0x888888, 0xAAAAAA, 0xCCCCCC, 0xDDDDDD, 0xEEEEEE];
+        let lineWidth = 8;
+        for (const color of colors) {
+            this.graphics.lineStyle(lineWidth, color, 1);
+            this.graphics.beginPath();
+            this.graphics.arc(scrCenter.x + PAN_LEFT, scrCenter.y, MANDREL_WIDTH, INITIAL_ANGLE_RAD, this.endAngle);
+            this.graphics.lineTo(wireStraightEnd.x, wireStraightEnd.y);
+            this.graphics.strokePath();
+            lineWidth -= 2;
+        }
+
+        this.button.setPosition(wireStraightEnd.x, wireStraightEnd.y);
         return {
-            start: {
-                x: scrCenter.x + PAN_LEFT + MANDREL_WIDTH * Math.cos(this.endAngle), 
-                y: scrCenter.y + MANDREL_WIDTH * Math.sin(this.endAngle)
-            },
-            end: wireTipPos,
+            start: wireStraightStart,
+            end: wireStraightEnd,
         }
     }
 
@@ -271,7 +268,7 @@
         const dx = scrCenter.x - mousePosition.x;
         const dy = scrCenter.y - mousePosition.y;
         const phi = Math.atan2(dy, dx);
-        
+    
         let low = INITIAL_ANGLE_RAD;
         let high = 9 * Math.PI / 4;
         const epsilon = 1e-4;
@@ -282,21 +279,21 @@
             const tipDx = scrCenter.x - tipPos.x;
             const tipDy = scrCenter.y - tipPos.y;
             const tipPhi = Math.atan2(tipDy, tipDx);
-            
+    
             let delta = phi - tipPhi;
             // Normalize delta to the range [-π, π]
             while (delta > Math.PI) {
                 delta -= 2 * Math.PI;
-            } 
+            }
             while (delta < -Math.PI) {
                 delta += 2 * Math.PI;
             }
-            
+
             if (Math.abs(delta) < epsilon) {
                 bestTheta = mid;
                 break;
             }
-            
+
             if (delta < 0) {
                 // tipPhi is behind phi, need to increase tipPhi by decreasing theta
                 high = mid;
