@@ -191,7 +191,7 @@
                     this.pliersContainer.rotation += totalDeltaAngle;
                     this.wire = this.renderWire();
 
-                    var error = 0 * Math.max(0,
+                    var error = Math.max(0,
                         Phaser.Math.Distance.BetweenPoints(this.wire.end, this.pointerPos) 
                         - SAFE_DISTANCE_MARGIN
                     );
