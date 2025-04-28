@@ -12,6 +12,7 @@
     config.scene.push({
         key: 'open-ring-mandrel',
         preload: function() {
+            // TODO this.sound.add
             this.load.audio('metal-hit', 'sound/metal-hit.mp3');
             this.load.audio('metal-hit-soft', 'sound/metal-hit-soft.mp3');
             this.load.audio('metal-hit-hollow', 'sound/metal-hit-hollow.mp3');

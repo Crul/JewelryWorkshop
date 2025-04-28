@@ -7,6 +7,7 @@
             this.load.image('btn-v-slot-saw', 'imgs/btn-v-slot-saw.png');
             this.load.image('btn-blowtorch', 'imgs/btn-blowtorch.png');
             this.load.image('btn-pliers', 'imgs/btn-pliers.png');
+            this.load.image('btn-disc-cutter', 'imgs/btn-disc-cutter.png');
         },
         create: function () {
             var btns = [
@@ -29,6 +30,10 @@
                 this.add.image(scrCenter.x - 50, 220, 'btn-pliers')
                     .setInteractive()
                     .on('pointerdown', () => this.scene.start('pliers'), this),
+                    
+                this.add.image(scrCenter.x + 50, 220, 'btn-disc-cutter')
+                    .setInteractive()
+                    .on('pointerdown', () => this.scene.start('disc-cutter'), this),
             ]
 
             fadeOutSplash();
