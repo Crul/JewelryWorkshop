@@ -1,9 +1,9 @@
 (function () {
     var HAMMER_Y_POS = 55;
     var MAX_HAMMER_FORCE = 50;
-    var MIN_HAMMER_FORCE = 45;
+    var MIN_HAMMER_FORCE = 47;
     var MAX_PARTICLES = 10;
-    var POWER_BAR_HEIGHT = 220;
+    var POWER_BAR_HEIGHT = 187;
     config.scene.push({
         key: 'disc-cutter',
         preload: function() {
@@ -24,8 +24,17 @@
             this.load.image('disc-cutter', 'imgs/disc-cutter.png');
             this.load.image('disc-cutter-cilinder', 'imgs/disc-cutter-cilinder.png');
             this.load.image('brass-hammer', 'imgs/brass-hammer.png');
+            this.load.image('power-bar', 'imgs/power-bar.png');
         },
         create: function () {
+            this.add.image(scrCenter.x + 50, scrCenter.y, 'power-bar');
+            this.powerBar = this.add
+                .rectangle(
+                    scrCenter.x + 49,
+                    scrCenter.y + POWER_BAR_HEIGHT / 2 - 14,
+                    18, 0, 0xff0000
+                ).setOrigin(0.5, 1);
+
             this.cilinder = this.add.image(scrCenter.x - 50, scrCenter.y, 'disc-cutter-cilinder');
             this.add.image(scrCenter.x - 50, scrCenter.y, 'disc-cutter');
             this.hammer = this.add.image(scrCenter.x + 180, scrCenter.y + HAMMER_Y_POS, 'brass-hammer');
@@ -43,12 +52,6 @@
             }).stop();
             
             this.forceUpOrDown = 1;
-            this.powerBar = this.add
-                .rectangle(
-                    scrCenter.x + 50,
-                    scrCenter.y + POWER_BAR_HEIGHT / 2,
-                    25, 0, 0xff0000
-                ).setOrigin(0.5, 1);
 
             this.buttonPressing = false;
             this.hammerHasHit = false;
@@ -92,8 +95,8 @@
             if (this.popupGroup.active)
                 return;
             
-            this.powerBar.height = 
-                -POWER_BAR_HEIGHT * Math.pow(this.hammerForce, 5) / Math.pow(MAX_HAMMER_FORCE, 5);
+            const powerPercentage = Math.pow(this.hammerForce, 8) / Math.pow(MAX_HAMMER_FORCE, 8);
+            this.powerBar.height = -POWER_BAR_HEIGHT * powerPercentage;
 
             if (this.hammering) {
                 this.hammer.rotation -= 0.5;
@@ -130,8 +133,8 @@
                 if (this.hammerHasHit)
                     return;
 
-                this.hammer.rotation += 0.03;
-                this.hammer.y -= 2;
+                this.hammer.rotation = powerPercentage * 1;
+                this.hammer.y = scrCenter.y + HAMMER_Y_POS - 50 * powerPercentage;
                 this.hammerForce += this.forceUpOrDown;
                 
                 if (this.hammerForce > MAX_HAMMER_FORCE) {
